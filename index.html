@@ -613,6 +613,11 @@ body {
 	color: gray !important;
 	text-decoration: none;
 }
+.query {
+	background: #f1f1f1;
+	padding: 1em;
+	text-align: left;
+}
 .src a {
 	color: gray !important;
 	text-decoration: none;
@@ -661,6 +666,20 @@ APP: <a href=http://creativecommons.org/licenses/by/4.0/ target=_blank>CC BY</a>
 SPARQL: <a href=https://sparql.city.kyoto.lg.jp/sparql/ target=_blank>京都オープンデータ</a><br>
 <a href=https://github.com/codeforfukui/findfacility/>ソースコード on GitHub</a><br>
 SPARQL Knocker: <a href=https://taisukef.github.io/SPARQLKnocker/ target=_blank>SPARQL Knocker</a><br>
+</div>
+
+<div class="query">
+[SPARQLクエリー例、緯度経度を持つデータを10件取得 → <a href=https://sparql.city.kyoto.lg.jp/sparql/>SPARQL Endpoint</a>]<br>
+<div style="white-space:pre">prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+prefix dc: &lt;http://purl.org/dc/terms/&gt;
+prefix ic: &lt;http://imi.go.jp/ns/core/rdf#&gt;
+select ?s ?name ?classified ?lat ?lng {
+	?s rdfs:label ?name;
+		ic:種別 ?classified;
+		ic:地理座標 / ic:緯度 ?lat;
+		ic:地理座標 / ic:経度 ?lng.
+} limit 10
+</div>
 </div>
 
 <div class="pr">
