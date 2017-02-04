@@ -1,2 +1,2 @@
-# バス停を探せ 5つ星オープンデータ版
-https://codeforfukui.github.io/findbusstop/
+# 京都の施設を探す
+https://codeforfukui.github.io/findfacility/
