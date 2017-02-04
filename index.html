@@ -380,7 +380,8 @@ var getContent = function(data) {
 	s.push("<div id='data'>");
 	
 //	s.push("<div>" + trans(icons[data.type].name) + "</div>");
-	s.push("<div id='title'>" + data.routename + " / " + data.routeid + "</div>");
+	s.push("<div>" + data.classified + "</div>");
+//	s.push("<div id='title'>" + data.routename + " / " + data.routeid + "</div>");
 	s.push("<div id='title'>" + getName(data) + "</div>");
 	if (data.coverage)
 		s.push("使用可能エリア: " + data.coverage + "<br>");
@@ -414,7 +415,7 @@ var makeMarker = function(map, pos, data) {
 		icon = icons[data.type].getIcon(data);
 	}
 	var icon = "img/icon_info.png";
-	dump(data);
+//	dump(data);
 	return new google.maps.Marker({
 		position: pos,
 		map: map,
@@ -656,19 +657,17 @@ body {
 </div>
 
 <div class="src">
-APP: <a href=http://creativecommons.org/licenses/by/4.0/ target=_blank>CC BY</a> <a href=http://fukuno.jig.jp/1619 target=_blank>Taisuke Fukuno / Create Everyday</a><br>
-SPARQL: <a href=http://sparql.odp.jig.jp/ target=_blank>odp</a><br>
-<a href=https://github.com/codeforfukui/findbusstop/>ソースコード on GitHub</a><br>
-要望はこちら <a href=https://github.com/codeforfukui/findbusstop/issues>Issues on GitHub</a><br>
-fork歓迎、プルリクエストもお気軽に！<br>
+APP: <a href=http://creativecommons.org/licenses/by/4.0/ target=_blank>CC BY</a> <a href=http://fukuno.jig.jp/ target=_blank>Taisuke Fukuno / Create Everyday</a><br>
+SPARQL: <a href=https://sparql.city.kyoto.lg.jp/sparql/ target=_blank>京都オープンデータ</a><br>
+<a href=https://github.com/codeforfukui/findfacility/>ソースコード on GitHub</a><br>
 </div>
 
 <div class="pr">
 [PR]<br>
-<a href=http://fukuno.jig.jp/cntr/?u=https://codeforfukui.github.io/withkids/index.html target=_blank>
-<img src=https://codeforfukui.github.io/withkids/img/flyer.jpg width=50%><br>
-WithKids</a><br>
-子供の年齢別、体験オープンデータによる福井県池田町めぐり！
+<a href=http://fukuno.jig.jp/cntr/?u=https://howml.github.io/akijikan/ target=_blank>
+<img src=https://howml.github.io/akijikan/img/flyer.jpg width=50%><br>
+AKIJIKAN</a><br>
+忙しいビジネスマンの心の止まり木
 </div>
 
 </body>
