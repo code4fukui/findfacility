@@ -234,7 +234,7 @@ var loadRefuge = function(ll, funcnext) {
 				ic:地理座標 / ic:緯度 ?lat;
 				ic:地理座標 / ic:経度 ?lng.
 				%FILTER%
-		} limit 100
+		} limit 1
 	*/});
 	
 //	var filter = "filter(?lat < " + latmax + " && ?lat > " + latmin + " && ?lng < " + lngmax + " && ?lng > " + lngmin + ")\n";
@@ -417,7 +417,8 @@ var makeMarker = function(map, pos, data) {
 	if (icons[data.type].getIcon) {
 		icon = icons[data.type].getIcon(data);
 	}
-	var icon = "icon/icon_info.png";
+	var icon = "img/icon_info.png";
+	dump(data);
 	return new google.maps.Marker({
 		position: pos,
 		map: map,
