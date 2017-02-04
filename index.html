@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset='utf-8'/>
-<title>findbusstop - odp</title>
+<title>findfacility 施設を探す - kyotoopendata</title>
 <meta property="og:image" content="ss.jpg">
 <link rel="apple-touch-icon" href="img/icon_busstop.png"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
@@ -216,7 +216,7 @@ var loadRefuge = function(ll, funcnext) {
 	var lngmax = b.getSouthWest().lng();
 	alert(latmin + " " + lngmin + " " + latmax + " " + lngmax);
 	*/
-	var dll = 0.01;
+	var dll = 0.02;
 	var lat = ll.lat();
 	var lng = ll.lng();
 	var latmin = lat - dll;
@@ -234,10 +234,9 @@ var loadRefuge = function(ll, funcnext) {
 				ic:地理座標 / ic:緯度 ?lat;
 				ic:地理座標 / ic:経度 ?lng.
 				%FILTER%
-		} limit 1
+		}
 	*/});
 	
-//	var filter = "filter(?lat < " + latmax + " && ?lat > " + latmin + " && ?lng < " + lngmax + " && ?lng > " + lngmin + ")\n";
 	var filter = "filter(xsd:float(?lat) < " + latmax + " && xsd:float(?lat) > " + latmin + " && xsd:float(?lng) < " + lngmax + " && xsd:float(?lng) > " + lngmin + ")\n";
 //	var filter = "";
 	q = q.replace("%FILTER%", filter);
@@ -277,9 +276,9 @@ var loadRefuge = function(ll, funcnext) {
 */
 //	prompt(q);
 	querySPARQL(q, function(data) {
-		dump(data);
+//		dump(data);
 		var items = data.results.bindings;
-		alert(items.length); // 全データ3894 全種データ集まっている2568 2016.12.9
+//		alert(items.length); // 全データ3894 全種データ集まっている2568 2016.12.9
 		
 		bounds = new google.maps.LatLngBounds();
 		for (var i = 0; i < items.length; i++) {
