@@ -417,6 +417,7 @@ var makeMarker = function(map, pos, data) {
 	if (icons[data.type].getIcon) {
 		icon = icons[data.type].getIcon(data);
 	}
+	var icon = "icon/icon_info.png";
 	return new google.maps.Marker({
 		position: pos,
 		map: map,
