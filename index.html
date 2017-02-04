@@ -400,12 +400,9 @@ var getContent = function(data) {
 	if (data.diameter)
 		s.push("直径：" + decodeURIComponent(data.diameter) + "mm<br>");
 	if (data.s)
-		s.push("<a href='" + data.s + "' target=_blank>DATA on odp</a><br>");
+		s.push("<a href='" + data.s + "' target=_blank>DATA</a><br>");
 //	s.push("DATA <a href='" + data.url + "' target=_blank>" + data.url + "</a><br>");
 //	debug(data.graph);
-	if (data.graph.startsWith("http://odp.jig.jp/rdf/jp/fukui/sabae/")) {
-		s.push("※<a href=http://www.city.sabae.fukui.jp/pageview.html?id=10525 target=_blank>鯖江市公衆WiFi</a>: sabaewifi / sabae12345678");
-	}
 	s.push("</div>");
 	return s.join('');
 };
