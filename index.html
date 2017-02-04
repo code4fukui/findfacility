@@ -236,8 +236,11 @@ var loadRefuge = function(ll, funcnext) {
 				%FILTER%
 		} limit 100
 	*/});
+	
 //	var filter = "filter(?lat < " + latmax + " && ?lat > " + latmin + " && ?lng < " + lngmax + " && ?lng > " + lngmin + ")\n";
-//	q = q.replace("%FILTER%", filter);
+	var filter = "filter(xsd:float(?lat) < " + latmax + " && xsd:float(?lat) > " + latmin + " && xsd:float(?lng) < " + lngmax + " && xsd:float(?lng) > " + lngmin + ")\n";
+//	var filter = "";
+	q = q.replace("%FILTER%", filter);
 
 /*
 	var q =
