@@ -3,14 +3,14 @@
 <html>
 <head>
 <meta charset='utf-8'/>
-<title>京都の施設を探す #kyotoopendata</title>
+<title>施設を探す（京都、大阪、odp対応版） #kyotoopendata #osakaopendata #odp</title>
 <meta property="og:image" content="ss.jpg">
 <link rel="apple-touch-icon" href="icon.png"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <meta name="format-detection" content="telephone=no">
 <script src="lib/fukuno.js"></script>
 <script src="lib/gmap.js"></script>
-<script src="lib/kyotoopendata.js"></script>
+<script src="lib/sparql.js"></script>
 <script>"use strict";
 			
 var DEFAULT_ORG;
@@ -105,7 +105,43 @@ select ?url ?name ?classified ?lat ?lng {
 		ic:地理座標 / ic:経度 ?lng.
 } limit 10
 	*/});
-	querySPARQL(q, function(data) {
+	
+	// ok - osaka
+	var q = f2s(function() {/*
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+prefix dc: <http://purl.org/dc/terms/>
+prefix ic: <http://imi.go.jp/ns/core/rdf#>
+select ?url ?name ?classified ?lat ?lng {
+	?url rdfs:label ?name.
+} limit 10
+	*/});
+	
+	// ng - osaka
+	var q = f2s(function() {/*
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix dc: <http://purl.org/dc/terms/>
+prefix ic: <http://imi.go.jp/ns/core/rdf#>
+select ?url ?name ?classified {
+	?url rdfs:label ?name.
+	?url ic:種別 ?classified.
+} limit 10
+	*/});
+
+/*
+prefix ic: <http://imi.go.jp/ns/core/rdf#> // 2.3.2
+PREFIX ic: <http://imi.ipa.go.jp/ns/core/rdf#> // 2.3.1
+*/
+
+	var q = f2s(function() {/*
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ic: <http://imi.ipa.go.jp/ns/core/rdf#>
+select ?s ?label ?at {
+  ?s  rdfs:label ?label ;
+  ic:種別 ?at .
+} LIMIT 10
+	*/});
+
+	querySPARQL(SPARQL_ENDPOINT[1], q, function(data) {
 		dump(data);
 	});
 };
@@ -118,10 +154,11 @@ var init = function() {
 	lang(getLanguage2(), false);
 
 //	DEFAULT_ORG = new google.maps.LatLng(40.392834, -3.723986); // madrid
-//	DEFAULT_ORG = new google.maps.LatLng(35.943352, 136.188597); // sabae st.
 //	DEFAULT_ORG = new google.maps.LatLng(34.834509, 138.177419); // shimada city
 //	DEFAULT_ORG = new google.maps.LatLng(35.691180, 139.701038); // shinjuku st. east
-	DEFAULT_ORG = new google.maps.LatLng(34.987115, 135.759797; // kyoto st.
+//	DEFAULT_ORG = new google.maps.LatLng(35.943352, 136.188597); // sabae st.
+//	DEFAULT_ORG = new google.maps.LatLng(34.702388, 135.496047); // osaka st.
+	DEFAULT_ORG = new google.maps.LatLng(34.987115, 135.759797); // kyoto st.
 			
 
 	
@@ -156,6 +193,21 @@ var init = function() {
 		}
 		currentdislist = 0;
 		navigate(dislist[currentdislist].marker);
+	};
+	
+	var POS = {
+		shimada: new google.maps.LatLng(34.834509, 138.177419), // shimada city
+		shinjuku: new google.maps.LatLng(35.691180, 139.701038), // shinjuku st. east
+		shinagawa: new google.maps.LatLng(35.628471, 139.738878), // shinagawa st.
+		sabae: new google.maps.LatLng(35.943352, 136.188597), // sabae st.
+		osaka: new google.maps.LatLng(34.702388, 135.496047), // osaka st.
+		kyoto: new google.maps.LatLng(34.987115, 135.759797), // kyoto st.
+		fukui: new google.maps.LatLng(36.062091, 136.223340), // fukui st.
+		tottori: new google.maps.LatLng(35.494029, 134.225892), // tottori st.
+	};
+	
+	posselect.onchange = function() {
+		setPosition(POS[this.value], 5);
 	};
 	
 	markers = [];
@@ -228,15 +280,16 @@ var loadRefuge = function(ll, funcnext) {
 	var q = f2s(function() {/*
 		prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
 		prefix dc: <http://purl.org/dc/terms/>
-		prefix ic: <http://imi.go.jp/ns/core/rdf#>
-		select ?s ?name ?classified ?lat ?lng {
+		prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+		select ?s ?name ?classified ?lat ?lng ?graph { graph ?graph {
 			?s rdfs:label ?name;
 				ic:種別 ?classified;
 				ic:地理座標 / ic:緯度 ?lat;
 				ic:地理座標 / ic:経度 ?lng.
 				%FILTER%
-		}
+		} }
 	*/});
+//				filter(lang(?name)="ja")
 	
 	var filter = "filter(xsd:float(?lat) < " + latmax + " && xsd:float(?lat) > " + latmin + " && xsd:float(?lng) < " + lngmax + " && xsd:float(?lng) > " + lngmin + ")\n";
 //	var filter = "";
@@ -276,26 +329,27 @@ var loadRefuge = function(ll, funcnext) {
 		"}";
 */
 //	prompt(q);
-	querySPARQL(q, function(data) {
-//		dump(data);
-		var items = data.results.bindings;
-//		alert(items.length); // 全データ3894 全種データ集まっている2568 2016.12.9
-		
-		bounds = new google.maps.LatLngBounds();
-		for (var i = 0; i < items.length; i++) {
-			var it = items[i];
-			var d = {};
-			d.type = TYPE;
-			for (var n in it) {
-				d[n] = it[n].value;
+	for (var i = 0; i < SPARQL_ENDPOINT.length; i++) {
+		querySPARQL(SPARQL_ENDPOINT[i], q, function(data) {
+	//		dump(data);
+			var items = data.results.bindings;
+			
+			bounds = new google.maps.LatLngBounds();
+			for (var i = 0; i < items.length; i++) {
+				var it = items[i];
+				var d = {};
+				d.type = TYPE;
+				for (var n in it) {
+					d[n] = it[n].value;
+				}
+				makeMarkerItem(d);
 			}
-			makeMarkerItem(d);
-		}
-		if (data.length > 0)
-			map.fitBounds(bounds);
-		
-		funcnext();
-	});
+			if (data.length > 0)
+				map.fitBounds(bounds);
+			
+			funcnext();
+		});
+	}
 };
 
 var getNearPosition = function(lat, lng) {
@@ -392,7 +446,7 @@ var getContent = function(data) {
 		s.push("電源: " + data.plugs + "<br>");
 //	s.push("[<a href='" + data.seealso + "' target=_blank>seeAlso</a>] [<a href=" + searchImage(getName(data)) + " target=_blank>img search</a>]</br>");
 /*	s.push(data.address + "<br>"); */
-	s.push("MAP <a href='" + mapurl + "' target=_blank>" + pos.lat() + "," + pos.lng() + "</a><br>");
+//	s.push("MAP <a href='" + mapurl + "' target=_blank>" + pos.lat() + "," + pos.lng() + "</a><br>");
 //	if (data.classified)
 //		s.push("種別：" + decodeURIComponent(data.classified) + "<br>");
 	if (data.address)
@@ -403,6 +457,8 @@ var getContent = function(data) {
 		s.push("直径：" + decodeURIComponent(data.diameter) + "mm<br>");
 	if (data.s)
 		s.push("<a href='" + data.s + "' target=_blank>DATA</a><br>");
+	if (data.graph)
+		s.push("<a href='" + data.graph + "' target=_blank>GRAPH</a><br>");
 //	s.push("DATA <a href='" + data.url + "' target=_blank>" + data.url + "</a><br>");
 //	debug(data.graph);
 	s.push("</div>");
@@ -637,6 +693,15 @@ body {
 <div id='main'>
 
 <div id='navi'>
+<select id="posselect">
+	<option value=kyoto>京都駅</option>
+	<option value=osaka>大阪駅</option>
+	<option value=shinagawa>品川駅</option>
+	<option value=shinjuku>新宿駅</option>
+	<option value=tottori>鳥取駅</option>
+	<option value=fukui>福井駅</option>
+	<option value=sabae>鯖江駅</option>
+</select>
 <div id='map'></div>
 <button class='nbtn' id='btnp'>&lt;&lt;</button>
 <button class='nbtn' id='btnf'>nearest</button>
@@ -670,10 +735,12 @@ SPARQL Knocker: <a href=https://taisukef.github.io/SPARQLKnocker/ target=_blank>
 </div>
 
 <div class="query">
-[SPARQLクエリー例、緯度経度を持つデータを10件取得 → <a href=https://sparql.city.kyoto.lg.jp/sparql/>SPARQL Endpoint</a>]<br>
+[SPARQLクエリー例、緯度経度を持つデータを10件取得]<br>
+→ for IMI 2.3.2 <a href=https://sparql.city.kyoto.lg.jp/sparql/>Kyoto SPARQL Endpoint</a><br>
 <div style="white-space:pre">prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
 prefix dc: &lt;http://purl.org/dc/terms/&gt;
 prefix ic: &lt;http://imi.go.jp/ns/core/rdf#&gt;
+
 select ?s ?name ?classified ?lat ?lng {
 	?s rdfs:label ?name;
 		ic:種別 ?classified;
@@ -681,6 +748,22 @@ select ?s ?name ?classified ?lat ?lng {
 		ic:地理座標 / ic:経度 ?lng.
 } limit 10
 </div>
+<br><br>
+
+→ for IMI 2.3.1 <a href=http://sparql.odp.jig.jp>odp SPARQL Endpoint</a>, <a href=https://data.city.osaka.lg.jp/sparql>Osaka SPARQL Endpoint</a><br>
+<div style="white-space:pre">prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+prefix dc: &lt;http://purl.org/dc/terms/&gt;
+prefix ic: &lt;http://imi.ipa.go.jp/ns/core/rdf#&gt;
+
+select ?s ?name ?classified ?lat ?lng {
+	?s rdfs:label ?name;
+		ic:種別 ?classified;
+		ic:地理座標 / ic:緯度 ?lat;
+		ic:地理座標 / ic:経度 ?lng.
+} limit 10
+</div>
+
+
 </div>
 
 <div class="pr">
