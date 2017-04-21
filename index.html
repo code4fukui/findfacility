@@ -202,6 +202,7 @@ var init = function() {
 		sabae: new google.maps.LatLng(35.943352, 136.188597), // sabae st.
 		osaka: new google.maps.LatLng(34.702388, 135.496047), // osaka st.
 		kyoto: new google.maps.LatLng(34.987115, 135.759797), // kyoto st.
+		kobe: new google.maps.LatLng(34.694303, 135.194580), // kobe sannomiya st.
 		fukui: new google.maps.LatLng(36.062091, 136.223340), // fukui st.
 		tottori: new google.maps.LatLng(35.494029, 134.225892), // tottori st.
 	};
@@ -220,6 +221,7 @@ var bounds;
 var makeMarkerItem = function(d) {
 	var lat = d.latitude || d.lat;
 	var lng = d.longitude || d.lng;
+//	console.log(lat + " " + lng);
 	var ll = new google.maps.LatLng(lat, lng);
 	d.pos = ll;
 	bounds.extend(ll);
@@ -694,6 +696,8 @@ body {
 
 <div id='navi'>
 <select id="posselect">
+	<option>[場所を選択]</option>
+	<option value=kobe>神戸三宮駅</option>
 	<option value=kyoto>京都駅</option>
 	<option value=osaka>大阪駅</option>
 	<option value=shinagawa>品川駅</option>
