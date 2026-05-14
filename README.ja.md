@@ -2,7 +2,7 @@
 
 ## デモ
 
-- [ウェブアプリケーション](https://codeforfukui.github.io/findfacility/)
+- ウェブアプリケーション *(demo unavailable)*
 
 ## 機能
 
@@ -14,7 +14,7 @@
 
 ## 使い方
 
-1. [ウェブアプリケーション](https://codeforfukui.github.io/findfacility/)を開きます。
+1. ウェブアプリケーション *(demo unavailable)*を開きます。
 2. 位置情報へのアクセスを許可して、近くの施設を自動的に検索します。
 3. ドロップダウンメニューを使用して特定の都市に移動するか、地図を閲覧します。マーカーをクリックして施設の詳細を表示します。
 

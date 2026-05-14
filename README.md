@@ -4,7 +4,7 @@ A web application to find and map public facilities in Japanese cities like Kyot
 
 ## Demo
 
-- [Web application](https://codeforfukui.github.io/findfacility/)
+- Web application *(demo unavailable)*
 
 ## Features
 
@@ -16,7 +16,7 @@ A web application to find and map public facilities in Japanese cities like Kyot
 
 ## Usage
 
-1.  Open the [web application](https://codeforfukui.github.io/findfacility/).
+1.  Open the web application *(demo unavailable)*.
 2.  Allow location access to automatically find facilities near you.
 3.  Use the dropdown menu to jump to a specific city, or browse the map. Click on a marker to see facility details.
 
